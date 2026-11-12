@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>شبیه‌ساز AC | حرکت الکترون‌ها در مس</title>
+  <style>
+    :root{--bg:#090a0d;--panel:#111317;--panel2:#191b20;--border:#30333b;--muted:#b2b5c1;--text:#f3f4f6;--blue:#3998ef;--amber:#d7a047;--copper:#bd8146}
+    *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:var(--bg);color:var(--text);font-family:Tahoma,"Segoe UI",Arial,sans-serif;line-height:1.8}
+    .wrap{max-width:990px;margin:auto;padding:16px}
+    .panel{border:1px solid var(--border);border-radius:21px;background:var(--panel);padding:22px 22px 18px;box-shadow:0 8px 26px #0003}
+    h1{font-size:clamp(19px,3vw,27px);margin:0 0 6px;font-weight:750}h2{font-size:17px;margin:0 0 12px}.intro{color:var(--muted);margin:0 0 18px;font-size:14px}
+    .phase-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;background:#0b0c0f;border:1px solid #292b32;border-radius:14px;padding:5px;margin-bottom:14px;direction:ltr}
+    .phase-tabs button{font-family:inherit;border:0;background:transparent;border-radius:11px;color:#b9bcc4;font-size:17px;font-weight:700;padding:10px 6px;cursor:pointer;transition:background .2s,color .2s}
+    .phase-tabs button.active{background:#292b2f;color:#fff}.phase-tabs button:focus-visible,.play:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+    .wire{display:block;width:100%;height:auto;overflow:visible}
+    .chart{width:100%;height:auto;display:block;overflow:visible;margin-top:5px}
+    .controls{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:10px 0 14px}.play{border:1px solid #566679;background:#1b2734;color:#e8f3ff;font:700 14px Tahoma,"Segoe UI",Arial,sans-serif;border-radius:12px;padding:9px 14px;cursor:pointer;white-space:nowrap}
+    input[type=range]{width:min(100%,460px);accent-color:var(--blue);flex:1;min-width:135px;direction:ltr}
+    .tag{font:600 13px "Segoe UI",Tahoma,Arial,sans-serif;color:#b9c5d6;direction:ltr;white-space:nowrap}.readout{border:1px solid #36404b;background:#192029;border-radius:13px;padding:13px 16px;margin:10px 0;font-size:15px}.readout strong{display:block;margin-bottom:3px}.readout .small{color:#c4ced9;font-size:13px}
+    .footnote{font-size:13px;color:var(--muted);margin-top:10px}.line{border:0;border-top:1px solid #292c33;margin:17px 0}.legend{display:flex;flex-wrap:wrap;gap:13px;align-items:center;color:#c1c6d1;font-size:12px}.dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-left:5px;vertical-align:-1px}.dot.e{background:var(--blue)}.dot.ion{background:#9f6b3b;border:1px solid #da9b59}.tiny{font-size:12px;color:#aeb2bd;line-height:1.8}
+    @media(max-width:600px){.wrap{padding:8px}.panel{padding:13px;border-radius:14px}.phase-tabs button{font-size:14px}.readout{font-size:13px}.wire{margin:10px 0 0}.controls{gap:10px}.footnote{font-size:12px}}
+  </style>
+</head>
+<body>
+<main class="wrap">
+  <section class="panel" aria-label="شبیه ساز جریان متناوب">
+    <h1>حرکت الکترون‌ها در برق AC</h1>
+    <p class="intro">در یک سیم مسی و مدار <strong>مقاومتیِ بسته</strong>، جهت حرکت خالص الکترون‌ها در هر نیم‌چرخه عوض می‌شود.</p>
+    <h2>مراحل یک چرخه AC را انتخاب کن</h2>
+    <div class="phase-tabs" role="group" aria-label="زاویه موج">
+      <button data-phase="0" class="active" aria-pressed="true">0°</button>
+      <button data-phase="90" aria-pressed="false">90°</button>
+      <button data-phase="180" aria-pressed="false">180°</button>
+      <button data-phase="270" aria-pressed="false">270°</button>
+    </div>
+    <svg class="wire" viewBox="0 0 860 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="مدل ساده شبکه مس با یون‌های ثابت و الکترون‌های رسانش">
+      <text id="leftPole" x="20" y="44" fill="#b86f42" font-size="25" font-weight="bold" text-anchor="start">0</text>
+      <text id="rightPole" x="840" y="44" fill="#b86f42" font-size="25" font-weight="bold" text-anchor="end">0</text>
+      <rect x="14" y="55" width="832" height="260" rx="43" stroke="#C88A47" stroke-width="4" fill="#22180f"/>
+      <g id="ions"></g><g id="electrons"></g>
+    </svg>
+    <div class="legend"><span><span class="dot ion"></span>یون‌های مثبت مس (تقریباً ثابت)</span><span><span class="dot e"></span>الکترون‌های رسانش</span></div>
+    <svg class="chart" viewBox="0 0 860 200" role="img" aria-label="نمودار سینوسی ولتاژ AC به همراه نقطه انتخاب شده">
+      <line x1="24" y1="110" x2="840" y2="110" stroke="#7b818e" stroke-width="1.3" opacity=".65"/>
+      <text x="26" y="26" font-size="23" fill="#e9ecf0" font-family="Segoe UI,Arial,sans-serif">U</text>
+      <path id="sine" d="" fill="none" stroke="#2f9ee5" stroke-width="5" stroke-linecap="round"/>
+      <line id="markerLine" x1="24" x2="24" y1="25" y2="183" stroke="#e7af40" stroke-width="2.5" stroke-dasharray="7 7"/>
+      <circle id="markerDot" cx="24" cy="110" r="12" fill="#d59c32" stroke="#fff" stroke-width="2.5"/>
+      <text x="24" y="185" text-anchor="start" fill="#d1d2d6" font-size="20" font-family="Segoe UI,Arial,sans-serif">0°</text>
+      <text x="430" y="185" text-anchor="middle" fill="#d1d2d6" font-size="20" font-family="Segoe UI,Arial,sans-serif">180°</text>
+      <text x="836" y="185" text-anchor="end" fill="#d1d2d6" font-size="20" font-family="Segoe UI,Arial,sans-serif">360°</text>
+    </svg>
+    <div class="controls">
+      <button class="play" id="play" type="button" aria-pressed="false">▶ پخش آهسته</button>
+      <input id="phaseSlider" type="range" min="0" max="360" step="1" value="0" aria-label="زاویه چرخه بر حسب درجه">
+      <span id="phaseText" class="tag">0° | 0.0 ms</span>
+    </div>
+    <div class="readout" aria-live="polite">
+      <strong id="stateTitle">در این لحظه جریان خالص صفر است.</strong>
+      <div class="small" id="stateDesc">الکترون‌ها هنوز حرکت داخلی دارند، ولی جهت خالص حرکت صفر است.</div>
+    </div>
+    <p class="footnote">فلش‌های آبی جهت <strong>حرکت خالص الکترون‌ها</strong> را نشان می‌دهند. جهت جریان قراردادی مخالف آن‌هاست.</p>
+    <hr class="line">
+    <p class="tiny"><strong>نکته آموزشی:</strong> در برق 50 Hz یک چرخه واقعی فقط 20 میلی‌ثانیه طول می‌کشد. پخش این شبیه‌ساز عمداً آهسته شده تا بتوانی حرکت رفت‌وبرگشتی را ببینی. الکترون‌های فلز واقعاً مثل توپ‌های منظم رسم‌شده حرکت نمی‌کنند. برای مدار دارای سلف یا خازن، جریان ممکن است نسبت به ولتاژ اختلاف فاز داشته باشد.</p>
+  </section>
+</main>
+<script>
+(() => {
+  'use strict';
+  const ns = 'http://www.w3.org/2000/svg';
+  const ions = document.getElementById('ions');
+  const electrons = document.getElementById('electrons');
+  const leftPole = document.getElementById('leftPole');
+  const rightPole = document.getElementById('rightPole');
+  const markerLine = document.getElementById('markerLine');
+  const markerDot = document.getElementById('markerDot');
+  const slider = document.getElementById('phaseSlider');
+  const phaseText = document.getElementById('phaseText');
+  const stateTitle = document.getElementById('stateTitle');
+  const stateDesc = document.getElementById('stateDesc');
+  const play = document.getElementById('play');
+  const phaseBtns = [...document.querySelectorAll('[data-phase]')];
+  let phase = 0, playing = false, prev = null, frameId = null;
+  const clamp = x => Math.max(0,Math.min(360,x));
+  function el(tag,attrs,parent){const node=document.createElementNS(ns,tag); for(const [k,v] of Object.entries(attrs))node.setAttribute(k,String(v));parent.append(node);return node;}
+  for(let row=0; row<3;row++) for(let col=0;col<7;col++){
+    const x=84+col*115, y=105+row*83;
+    el('circle',{cx:x,cy:y,r:27,fill:'#9e6c3c','fill-opacity':'.42',stroke:'#c48b51','stroke-width':3},ions);
+    el('text',{x:x,y:y+9,'text-anchor':'middle','font-size':31,fill:'#c28c50'},ions).textContent='+';
+  }
+  const blobs=[];
+  for(let row=0; row<2;row++)for(let col=0; col<6;col++){
+    const x=140+col*115, y=148+row*85;
+    const g=el('g',{},electrons);
+    const circle=el('circle',{cx:x,cy:y,r:17,fill:'#2b91e8'},g);
+    el('text',{x:x,y:y+6,'text-anchor':'middle',fill:'white','font-size':22,'font-weight':650},g).textContent='−';
+    const arr=el('path',{d:'',stroke:'#2b91e8','stroke-width':5,fill:'none','stroke-linejoin':'round','stroke-linecap':'round'},g);
+    blobs.push({x,y,g,arr});
+  }
+  let d=''; for(let i=0;i<=360;i+=2){const x=24+i*812/360,y=110-83*Math.sin(i*Math.PI/180);d+=`${i===0?'M':'L'}${x.toFixed(2)} ${y.toFixed(2)} `;} document.getElementById('sine').setAttribute('d',d);
+  function setPhase(p){
+    phase=clamp(p); slider.value=Math.round(phase);const s=Math.sin(phase*Math.PI/180),c=Math.cos(phase*Math.PI/180),nearZero=Math.abs(s)<.02;
+    const x=24+phase*812/360,y=110-83*s;
+    markerLine.setAttribute('x1',x);markerLine.setAttribute('x2',x);markerDot.setAttribute('cx',x);markerDot.setAttribute('cy',y);
+    phaseText.textContent=`${Math.round(phase)}° | ${(phase/18).toFixed(1)} ms`;
+    const left=s>.02?'+':s<-.02?'−':'0';const right=s>.02?'−':s<-.02?'+':'0';leftPole.textContent=left;rightPole.textContent=right;
+    for (const b of blobs){
+      // A very small drift displacement; derivative of cos(theta) is -sin(theta).
+      const dx=11*c;
+      b.g.setAttribute('transform',`translate(${dx.toFixed(2)} 0)`);
+      if(nearZero){b.arr.setAttribute('d','');}else if(s>0){b.arr.setAttribute('d',`M${b.x-27} ${b.y} h-24 m0 0 l8 -7 m-8 7 l8 7`);}else{b.arr.setAttribute('d',`M${b.x+27} ${b.y} h24 m0 0 l-8 -7 m8 7 l-8 7`);}
+    }
+    if (nearZero){stateTitle.textContent='در این لحظه جریان خالص صفر است.';stateDesc.textContent='الکترون‌ها هنوز حرکت‌های داخلی دارند، ولی حرکت خالص جهت‌دار در این لحظه صفر است.';}
+    else if(s>0){stateTitle.textContent='حرکت خالص الکترون‌ها به سمت چپ است.';stateDesc.textContent='سمت چپ مثبت و سمت راست منفی است. جریان قراردادی در جهت مخالف، یعنی به سمت راست، است.';}
+    else{stateTitle.textContent='حرکت خالص الکترون‌ها به سمت راست است.';stateDesc.textContent='سمت چپ منفی و سمت راست مثبت است. جریان قراردادی در جهت مخالف، یعنی به سمت چپ، است.';}
+    phaseBtns.forEach(btn=>{const active=Number(btn.dataset.phase)===Math.round(phase);btn.classList.toggle('active',active);btn.setAttribute('aria-pressed',active?'true':'false');});
+  }
+  function pause(){playing=false;prev=null;if(frameId!==null)cancelAnimationFrame(frameId);frameId=null;play.textContent='▶ پخش آهسته';play.setAttribute('aria-pressed','false');}
+  function tick(t){if(!playing)return;if(prev!==null){const delta=Math.min(80,t-prev);setPhase((phase+delta*360/6500)%360);}prev=t;frameId=requestAnimationFrame(tick);}
+  play.addEventListener('click',()=>{if(playing){pause();return;}playing=true;play.textContent='Ⅱ توقف';play.setAttribute('aria-pressed','true');prev=null;frameId=requestAnimationFrame(tick);});
+  phaseBtns.forEach(btn=>btn.addEventListener('click',()=>{pause();setPhase(Number(btn.dataset.phase));}));
+  slider.addEventListener('input',()=>{pause();setPhase(Number(slider.value));});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();});
+  setPhase(0);
+})();
+</script>
+</body>
+</html>
